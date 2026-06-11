@@ -1,0 +1,143 @@
+{% comment %} Stitch Theme — Header Section {% endcomment %}
+
+<link rel="stylesheet" href="{{ 'header.css' | asset_url }}">
+
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+
+    <!-- LOGO -->
+    <a href="{{ routes.root_url }}" class="header-logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        <img
+          src="{{ section.settings.logo | image_url: width: 160 }}"
+          alt="{{ shop.name }}"
+          width="80"
+          height="auto"
+          loading="eager"
+        >
+      {%- else -%}
+        <span class="header-logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <!-- DESKTOP NAV -->
+    <nav class="header-nav" aria-label="Main navigation">
+      <a href="{{ routes.root_url }}shop" class="nav-link">Shop</a>
+      <span class="nav-divider"></span>
+      <a href="/pages/mission" class="nav-link">Mission</a>
+    </nav>
+
+    <!-- DESKTOP RIGHT ACTIONS -->
+    <div class="header-actions">
+      <button class="header-icon-btn" aria-label="Search" id="search-toggle">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <a href="/account/login" class="header-icon-btn" aria-label="Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+
+      <a href="{{ routes.cart_url }}" class="header-icon-btn header-cart" aria-label="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        {%- if cart.item_count > 0 -%}
+          <span class="cart-badge">{{ cart.item_count }}</span>
+        {%- endif -%}
+      </a>
+    </div>
+
+  </div>
+
+  <!-- SEARCH BAR (hidden by default) -->
+  <div class="header-search-bar" id="search-bar" hidden>
+    <form action="{{ routes.search_url }}" method="get" class="search-form" role="search">
+      <input type="search" name="q" placeholder="Search products…" class="search-input" autocomplete="off" aria-label="Search">
+      <button type="submit" class="search-submit" aria-label="Submit search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</header>
+
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+
+  <a href="{{ routes.root_url }}" class="mob-nav-item {% if request.page_type == 'index' %}active{% endif %}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    <span>Home</span>
+  </a>
+
+  <a href="{{ routes.root_url }}shop" class="mob-nav-item {% if request.page_type == 'collection' %}active{% endif %}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="7" height="7"/><rect x="15" y="3" width="7" height="7"/><rect x="15" y="15" width="7" height="7"/><rect x="2" y="15" width="7" height="7"/>
+    </svg>
+    <span>Shop</span>
+  </a>
+
+  <a href="{{ routes.cart_url }}" class="mob-nav-item {% if request.page_type == 'cart' %}active{% endif %}">
+    <span class="mob-cart-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+      {%- if cart.item_count > 0 -%}
+        <span class="mob-cart-badge">{{ cart.item_count }}</span>
+      {%- endif -%}
+    </span>
+    <span>Bag</span>
+  </a>
+
+  <a href="/account/login" class="mob-nav-item {% if request.page_type == 'customers/login' %}active{% endif %}">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+    <span>Login</span>
+  </a>
+
+</nav>
+
+<script>
+  const searchToggle = document.getElementById('search-toggle');
+  const searchBar = document.getElementById('search-bar');
+  searchToggle.addEventListener('click', () => {
+    const isHidden = searchBar.hasAttribute('hidden');
+    if (isHidden) {
+      searchBar.removeAttribute('hidden');
+      searchBar.querySelector('input').focus();
+    } else {
+      searchBar.setAttribute('hidden', '');
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 40,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 80
+    }
+  ]
+}
+{% endschema %}
