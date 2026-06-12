@@ -1,0 +1,255 @@
+{% comment %} MARCOS ALPHA Premium Curved Showcase Carousel {% endcomment %}
+
+<link rel="stylesheet" href="{{ 'showcase.css' | asset_url }}">
+
+<section class="showcase-section section-{{ section.id }}" id="showcase-{{ section.id }}">
+  <div class="showcase-container">
+    <div class="showcase-header">
+      <span class="showcase-tag">LIMITED COLLECTION</span>
+      <h2 class="showcase-title">THE NEW ERA</h2>
+    </div>
+
+    <div class="showcase-carousel-wrapper">
+      <div class="showcase-track">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <div class="showcase-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+              <div class="showcase-media">
+                {%- if block.settings.image != blank -%}
+                  <img
+                    src="{{ block.settings.image | image_url: width: 1600 }}"
+                    alt="{{ block.settings.heading | escape }}"
+                    class="showcase-img desktop-only"
+                    loading="lazy"
+                    width="1200"
+                    height="675"
+                  >
+                {%- else -%}
+                  <div class="showcase-img-placeholder desktop-only"></div>
+                {%- endif -%}
+
+                {%- if block.settings.image_mobile != blank -%}
+                  <img
+                    src="{{ block.settings.image_mobile | image_url: width: 800 }}"
+                    alt="{{ block.settings.heading | escape }}"
+                    class="showcase-img mobile-only"
+                    loading="lazy"
+                    width="600"
+                    height="800"
+                  >
+                {%- else -%}
+                  <div class="showcase-img-placeholder mobile-only"></div>
+                {%- endif -%}
+
+                <div class="showcase-overlay"></div>
+
+                <div class="showcase-content">
+                  {%- if block.settings.subheading != blank -%}
+                    <span class="showcase-slide-sub">{{ block.settings.subheading | escape }}</span>
+                  {%- endif -%}
+                  {%- if block.settings.heading != blank -%}
+                    <h3 class="showcase-slide-head">{{ block.settings.heading | escape }}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.link != blank and block.settings.button_label != blank -%}
+                    <a href="{{ block.settings.link }}" class="showcase-btn">
+                      {{ block.settings.button_label | escape }}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <!-- Fallback slides for onboarding -->
+          {%- for i in (1..3) -%}
+            <div class="showcase-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+              <div class="showcase-media">
+                <div class="showcase-img-placeholder desktop-only"></div>
+                <div class="showcase-img-placeholder mobile-only"></div>
+                <div class="showcase-overlay"></div>
+                <div class="showcase-content">
+                  <span class="showcase-slide-sub">STREETWEAR DROP 0{{ i }}</span>
+                  <h3 class="showcase-slide-head">ALPHA FORCE EDITION</h3>
+                  <a href="#" class="showcase-btn">DISCOVER</a>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      <!-- Navigation indicators -->
+      <div class="showcase-nav">
+        <button class="showcase-arrow arrow-prev" aria-label="Previous slide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="showcase-dots">
+          {%- if section.blocks.size > 0 -%}
+            {%- for block in section.blocks -%}
+              <span class="showcase-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for i in (1..3) -%}
+              <span class="showcase-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+        <button class="showcase-arrow arrow-next" aria-label="Next slide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    function initShowcaseCarousel() {
+      const section = document.getElementById('showcase-{{ section.id }}');
+      if (!section) return;
+
+      const track = section.querySelector('.showcase-track');
+      const slides = section.querySelectorAll('.showcase-slide');
+      const dots = section.querySelectorAll('.showcase-dot');
+      const prevBtn = section.querySelector('.arrow-prev');
+      const nextBtn = section.querySelector('.arrow-next');
+      
+      if (!track || slides.length === 0) return;
+
+      let currentIndex = 0;
+      const totalSlides = slides.length;
+
+      function goToSlide(index) {
+        currentIndex = (index + totalSlides) % totalSlides;
+        
+        // Horizontal translation scroll
+        const slideWidth = slides[0].clientWidth;
+        track.scrollTo({
+          left: currentIndex * slideWidth,
+          behavior: 'smooth'
+        });
+
+        // Toggle active slide class
+        slides.forEach((slide, idx) => {
+          if (idx === currentIndex) {
+            slide.classList.add('active');
+          } else {
+            slide.classList.remove('active');
+          }
+        });
+
+        // Update dots
+        dots.forEach((dot, idx) => {
+          if (idx === currentIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+        nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+      }
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          const index = parseInt(e.target.getAttribute('data-index'));
+          goToSlide(index);
+        });
+      });
+
+      // Synchronize native swiping on track
+      let isScrolling;
+      track.addEventListener('scroll', () => {
+        window.clearTimeout(isScrolling);
+        isScrolling = setTimeout(() => {
+          const slideWidth = slides[0].clientWidth;
+          const scrollIndex = Math.round(track.scrollLeft / slideWidth);
+          if (scrollIndex !== currentIndex) {
+            currentIndex = scrollIndex;
+            slides.forEach((slide, idx) => {
+              if (idx === currentIndex) {
+                slide.classList.add('active');
+              } else {
+                slide.classList.remove('active');
+              }
+            });
+            dots.forEach((dot, idx) => {
+              if (idx === currentIndex) {
+                dot.classList.add('active');
+              } else {
+                dot.classList.remove('active');
+              }
+            });
+          }
+        }, 100);
+      }, { passive: true });
+    }
+
+    window.addEventListener('load', initShowcaseCarousel);
+    document.addEventListener('shopify:section:load', initShowcaseCarousel);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Showcase Carousel",
+  "max_blocks": 5,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Desktop Slide Image (16:9 ratio)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Mobile Slide Image (vertical 3:4 or 4:5)"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "THE BLACK ALPHA PACK"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "PREMIUM COTTON SWEATS"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "SHOP NOW"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Slide Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Showcase Carousel",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,285 @@
+/* ============================================
+   MARCOS ALPHA PREMIUM STREETWEAR FOOTER STYLES
+   ============================================ */
+
+.site-footer {
+  background-color: #050505;
+  color: #ffffff;
+  padding: 80px 0 40px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 60px;
+}
+
+.footer-container {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--page-margin);
+}
+
+/* ── TOP FOOTER GRID ── */
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
+  margin-bottom: 60px;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* ── BRAND COLUMN ── */
+.brand-column {
+  grid-column: span 1;
+}
+
+.footer-brand {
+  font-family: var(--font-primary--family), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+}
+
+.footer-tagline {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+  text-transform: uppercase;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 16px;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: #ffffff;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.social-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.social-icon:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+}
+
+/* ── LINKS MENU ── */
+.footer-col-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+  text-transform: uppercase;
+  margin: 0 0 24px 0;
+}
+
+.footer-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-menu a {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.footer-menu a:hover {
+  color: #ffffff;
+  padding-left: 4px;
+}
+
+/* ── NEWSLETTER COLUMN ── */
+.newsletter-column {
+  grid-column: span 1;
+}
+
+.newsletter-desc {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 20px 0;
+}
+
+.footer-newsletter-form {
+  width: 100%;
+}
+
+.newsletter-input-group {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.newsletter-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 14px 48px 14px 16px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  transition: var(--transition-fast);
+  text-transform: uppercase;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.03);
+}
+
+.newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.newsletter-submit {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.newsletter-submit:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-50%) scale(1.03);
+}
+
+/* ── BOTTOM FOOTER ── */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 40px;
+}
+
+.footer-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.copyright-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+.policy-links {
+  display: flex;
+  gap: 20px;
+}
+
+.policy-links a {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: var(--transition-fast);
+}
+
+.policy-links a:hover {
+  color: #ffffff;
+}
+
+.footer-payments {
+  display: flex;
+  gap: 8px;
+}
+
+.payment-icon {
+  width: 38px;
+  height: 24px;
+  filter: grayscale(1) brightness(0.8);
+  transition: var(--transition-fast);
+}
+
+.payment-icon:hover {
+  filter: none;
+}
+
+/* ── RESPONSIVE STYLING ── */
+@media (max-width: 1024px) {
+  .footer-top-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+  
+  .brand-column {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-footer {
+    padding-bottom: 120px; /* Space for mobile floating bottom bar */
+  }
+
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .brand-column {
+    grid-column: span 1;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .footer-bottom-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

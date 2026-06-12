@@ -1,0 +1,80 @@
+/* PRELOADER STYLING */
+.preloader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #050505;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
+  visibility: visible;
+  opacity: 1;
+}
+
+.preloader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.preloader-brand {
+  font-family: var(--font-primary--family), sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: 0.25em;
+  color: #ffffff;
+  margin: 0;
+  text-transform: uppercase;
+  animation: preloader-fade-in-out 1.5s ease-in-out infinite alternate;
+}
+
+.preloader-bar-container {
+  width: 120px;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.preloader-bar {
+  width: 50px;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 999px;
+  position: absolute;
+  left: 0;
+  animation: preloader-slide 1s infinite ease-in-out;
+}
+
+@keyframes preloader-slide {
+  0% {
+    left: -50px;
+  }
+  100% {
+    left: 120px;
+  }
+}
+
+@keyframes preloader-fade-in-out {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}

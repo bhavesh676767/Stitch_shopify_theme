@@ -6,7 +6,7 @@
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    --font-primary--family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
     --font-primary--style: {{ settings.type_primary_font.style }};
     --font-primary--weight: {{ settings.type_primary_font.weight }};
     --page-width: {{ settings.max_page_width }};
@@ -14,5 +14,29 @@
     --color-background: {{ settings.background_color }};
     --color-foreground: {{ settings.foreground_color }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+
+    /* MARCOS ALPHA Design Tokens */
+    --color-glass-bg: rgba(255, 255, 255, 0.08);
+    --color-glass-border: rgba(255, 255, 255, 0.12);
+    --color-glass-text: #ffffff;
+    --color-card-bg: #111111;
+    --color-card-border: rgba(255, 255, 255, 0.08);
+    
+    --glass-navbar-bg: rgba(255, 255, 255, 0.85);
+    --glass-navbar-border: rgba(0, 0, 0, 0.06);
+    --glass-navbar-text: #000000;
+    
+    --radius-full: 9999px;
+    --radius-xxl: 28px;
+    --radius-xl: 20px;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    
+    --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --shadow-navbar: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: all 0.2s ease;
   }
 {% endstyle %}

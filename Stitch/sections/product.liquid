@@ -1,52 +1,474 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+{% comment %} MARCOS ALPHA Premium iOS-Style Product Page {% endcomment %}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+<div class="product-page-container">
+  <div class="product-page-grid">
+    
+    <!-- LEFT: 4:5 ASPECT RATIO IMAGE GALLERY -->
+    <div class="product-gallery">
+      <div class="main-image-wrapper">
+        {%- if product.featured_media != blank -%}
+          <img
+            src="{{ product.featured_media | image_url: width: 1000 }}"
+            alt="{{ product.title | escape }}"
+            id="ProductFeaturedImage"
+            class="gallery-featured-img"
+            width="800"
+            height="1000"
+            loading="eager"
+          >
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg gallery-featured-img' }}
+        {%- endif -%}
+      </div>
+      
+      {%- if product.media.size > 1 -%}
+        <div class="gallery-thumbnails">
+          {%- for media in product.media -%}
+            <button
+              class="thumbnail-btn {% if forloop.first %}active{% endif %}"
+              data-image-url="{{ media.image | image_url: width: 1000 }}"
+              aria-label="View product image {{ forloop.index }}"
+            >
+              <img
+                src="{{ media.image | image_url: width: 150 }}"
+                alt="{{ product.title | escape }} thumbnail"
+                width="100"
+                height="125"
+                loading="lazy"
+              >
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
+    <!-- RIGHT: PRODUCT INFORMATION -->
+    <div class="product-details-container">
+      <div class="product-header">
+        <span class="product-vendor">MARCOS ALPHA</span>
+        <h1 class="product-title">{{ product.title }}</h1>
+        <div class="product-price-wrapper">
+          <span class="price-amount">{{ product.price | money }}</span>
+          {%- if product.compare_at_price > product.price -%}
+            <span class="price-compare-amount">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="product-description-wrapper">
+        <h3 class="details-section-title">DESCRIPTION</h3>
+        <div class="product-description">
+          {{ product.description }}
+        </div>
+      </div>
+
+      <div class="product-actions-form">
+        {%- form 'product', product, id: 'AddToCartForm' -%}
+          {%- assign current_variant = product.selected_or_first_available_variant -%}
+          
+          <input type="hidden" name="id" value="{{ current_variant.id }}" id="SelectedVariantId">
+
+          <!-- VARIANT SELECTOR -->
+          {%- if product.variants.size > 1 -%}
+            <div class="product-variants-wrapper">
+              <h3 class="details-section-title">SELECT SIZE / VARIANT</h3>
+              <div class="ios-segmented-control">
+                {%- for variant in product.variants -%}
+                  <button
+                    type="button"
+                    class="segment-item {% if variant == current_variant %}active{% endif %} {% unless variant.available %}disabled{% endunless %}"
+                    data-variant-id="{{ variant.id }}"
+                    data-variant-price="{{ variant.price | money }}"
+                    data-variant-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+                  >
+                    {{ variant.title }}
+                  </button>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          <!-- QUANTITY SELECTOR -->
+          <div class="product-quantity-wrapper">
+            <h3 class="details-section-title">QUANTITY</h3>
+            <div class="ios-quantity-selector">
+              <button type="button" class="qty-btn minus-btn" aria-label="Decrease quantity">-</button>
+              <input type="number" name="quantity" id="ProductQuantity" value="1" min="1" aria-label="Quantity select">
+              <button type="button" class="qty-btn plus-btn" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <!-- ADD TO CART BUTTON -->
+          <div class="product-submit-wrapper">
+            {%- if product.available -%}
+              <button type="submit" name="add" class="product-add-btn" id="AddToCartBtn">
+                <span>ADD TO BAG</span>
+              </button>
+            {%- else -%}
+              <button type="submit" name="add" class="product-add-btn" id="AddToCartBtn" disabled>
+                <span>SOLD OUT</span>
+              </button>
+            {%- endif -%}
+          </div>
+        {%- endform -%}
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+<script>
+  (function() {
+    function initProductPage() {
+      // Gallery Thumbnail Swapper
+      const thumbnails = document.querySelectorAll('.thumbnail-btn');
+      const mainImg = document.getElementById('ProductFeaturedImage');
+      
+      thumbnails.forEach(thumb => {
+        thumb.addEventListener('click', function(e) {
+          e.preventDefault();
+          const newUrl = this.getAttribute('data-image-url');
+          if (mainImg && newUrl) {
+            mainImg.setAttribute('src', newUrl);
+          }
+          thumbnails.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+      // iOS Segmented Variant Selector
+      const segments = document.querySelectorAll('.segment-item');
+      const hiddenInput = document.getElementById('SelectedVariantId');
+      const priceDisp = document.querySelector('.price-amount');
+      const comparePriceDisp = document.querySelector('.price-compare-amount');
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+      segments.forEach(segment => {
+        segment.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (this.classList.contains('disabled')) return;
 
-    <input type="text" name="quantity" min="1" value="1">
+          const variantId = this.getAttribute('data-variant-id');
+          const variantPrice = this.getAttribute('data-variant-price');
+          const variantCompare = this.getAttribute('data-variant-compare-price');
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+          if (hiddenInput) hiddenInput.value = variantId;
+          if (priceDisp && variantPrice) priceDisp.textContent = variantPrice;
+          
+          if (comparePriceDisp) {
+            if (variantCompare) {
+              comparePriceDisp.textContent = variantCompare;
+              comparePriceDisp.style.display = 'inline-block';
+            } else {
+              comparePriceDisp.style.display = 'none';
+            }
+          }
+
+          segments.forEach(s => s.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+
+      // Quantity Incrementor
+      const qtyInput = document.getElementById('ProductQuantity');
+      const minusBtn = document.querySelector('.minus-btn');
+      const plusBtn = document.querySelector('.plus-btn');
+
+      if (qtyInput && minusBtn && plusBtn) {
+        minusBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          let val = parseInt(qtyInput.value) || 1;
+          if (val > 1) qtyInput.value = val - 1;
+        });
+
+        plusBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          let val = parseInt(qtyInput.value) || 1;
+          qtyInput.value = val + 1;
+        });
+      }
+    }
+
+    window.addEventListener('load', initProductPage);
+    document.addEventListener('shopify:section:load', initProductPage);
+  })();
+</script>
+
+{% stylesheet %}
+.product-page-container {
+  max-width: var(--page-width);
+  margin: 140px auto 80px auto;
+  padding: 0 var(--page-margin);
+  color: #ffffff;
+  background-color: #050505;
+}
+
+.product-page-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 64px;
+}
+
+@media (max-width: 900px) {
+  .product-page-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .product-page-container {
+    margin-top: 100px;
+  }
+}
+
+/* ── LEFT GALLERY ── */
+.product-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.main-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-xxl);
+  overflow: hidden;
+  border: 1px solid var(--color-card-border);
+  background: #111111;
+  box-shadow: var(--shadow-premium);
+}
+
+.gallery-featured-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumbnails {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.thumbnail-btn {
+  flex: 0 0 80px;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-card-border);
+  padding: 0;
+  cursor: pointer;
+  background: #111111;
+  transition: var(--transition-fast);
+}
+
+.thumbnail-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+  transition: var(--transition-fast);
+}
+
+.thumbnail-btn.active,
+.thumbnail-btn:hover {
+  border-color: #ffffff;
+}
+
+.thumbnail-btn.active img,
+.thumbnail-btn:hover img {
+  opacity: 1;
+}
+
+/* ── RIGHT PRODUCT DETAILS ── */
+.product-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.product-vendor {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.product-title {
+  font-size: 2.5rem;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 8px 0 16px 0;
+}
+
+.product-price-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.price-amount {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.price-compare-amount {
+  font-size: 1.2rem;
+  text-decoration: line-through;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.details-section-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  margin: 0 0 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 8px;
+}
+
+.product-description {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* iOS SEGMENTED CONTROL */
+.ios-segmented-control {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ios-segmented-control::-webkit-scrollbar {
+  display: none;
+}
+
+.segment-item {
+  flex: 1;
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.segment-item.active {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.segment-item.disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* iOS QUANTITY SELECTOR */
+.ios-quantity-selector {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  width: fit-content;
+  padding: 3px;
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  width: 38px;
+  height: 38px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+}
+
+.qty-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ios-quantity-selector input {
+  width: 50px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  -moz-appearance: textfield;
+}
+
+.ios-quantity-selector input::-webkit-outer-spin-button,
+.ios-quantity-selector input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* SUBMIT BUTTON */
+.product-submit-wrapper {
+  margin-top: 16px;
+}
+
+.product-add-btn {
+  width: 100%;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.05);
+}
+
+.product-add-btn:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+.product-add-btn:active {
+  transform: translateY(1px);
+}
+
+.product-add-btn:disabled {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.product",
-  "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "name": "Product Pages",
+  "settings": []
 }
 {% endschema %}

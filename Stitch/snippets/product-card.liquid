@@ -1,0 +1,117 @@
+{% comment %}
+  MARCOS ALPHA Premium Product Card Snippet
+  Accepts:
+  - product: {Object} Product object
+  - card_bg: {String} Optional card background setting
+{% endcomment %}
+
+{%- liquid
+  assign is_coming_soon = false
+  for tag in product.tags
+    assign tag_lower = tag | downcase
+    if tag_lower == 'coming-soon' or tag_lower == 'coming soon'
+      assign is_coming_soon = true
+    endif
+  endfor
+
+  assign is_sold_out = false
+  if product.available == false and is_coming_soon == false
+    assign is_sold_out = true
+  endif
+
+  assign is_available = false
+  if product.available and is_coming_soon == false
+    assign is_available = true
+  endif
+-%}
+
+<div class="product-card {% if is_sold_out %}card-sold-out{% elsif is_coming_soon %}card-coming-soon{% endif %}" data-product-id="{{ product.id }}">
+  <!-- PRODUCT IMAGE SLIDER -->
+  <div class="product-card-media">
+    <div class="product-card-slider-wrapper">
+      <div class="product-card-images">
+        {%- if product.media.size > 0 -%}
+          {%- for media in product.media limit: 5 -%}
+            <div class="product-card-image-slide" data-index="{{ forloop.index0 }}">
+              <img
+                src="{{ media.image | image_url: width: 600 }}"
+                alt="{{ product.title | escape }}"
+                loading="lazy"
+                width="480"
+                height="600"
+                class="product-card-img"
+              >
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <!-- Placeholder image -->
+          <div class="product-card-image-slide">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg product-card-img' }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Desktop Image Slider Arrows (Only shown on hover and if there are multiple images) -->
+    {%- if product.media.size > 1 -%}
+      <button class="slider-arrow arrow-left" aria-label="Previous image" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="slider-arrow arrow-right" aria-label="Next image" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      
+      <!-- Dots Indicator -->
+      <div class="slider-dots">
+        {%- for media in product.media limit: 5 -%}
+          <span class="slider-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Wishlist Button (Always available for Coming Soon & Sold Out, and optional for Available) -->
+    <button class="wishlist-btn" aria-label="Add to Wishlist" type="button" onclick="toggleWishlist(this, '{{ product.id }}')">
+      <svg class="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- PRODUCT INFO -->
+  <div class="product-card-info">
+    <div class="info-header">
+      <a href="{{ product.url }}" class="product-card-title">
+        {{ product.title }}
+      </a>
+      
+      {%- unless is_coming_soon -%}
+        <div class="product-card-price">
+          {%- if product.compare_at_price > product.price -%}
+            <span class="price-compare">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+          <span class="price-current">{{ product.price | money }}</span>
+        </div>
+      {%- endunless -%}
+    </div>
+
+    <!-- Actions Row -->
+    <div class="info-footer">
+      {%- if is_coming_soon -%}
+        <div class="card-status-badge badge-coming-soon">COMING SOON</div>
+      {%- elsif is_sold_out -%}
+        <div class="card-status-badge badge-sold-out">SOLD OUT</div>
+      {%- elsif is_available -%}
+        <!-- Add To Cart Form -->
+        {%- form 'product', product, class: 'product-card-form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <button type="submit" class="add-to-cart-btn" aria-label="Add {{ product.title }} to Cart">
+            <span>ADD TO CART</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        {%- endform -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>

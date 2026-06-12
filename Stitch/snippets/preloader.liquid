@@ -1,0 +1,32 @@
+<!-- PRELOADER COMPONENT -->
+<div id="preloader" class="preloader-overlay">
+  <div class="preloader-content">
+    <h1 class="preloader-brand">MARCOS ALPHA</h1>
+    <div class="preloader-bar-container">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Hide preloader once DOM/images are loaded
+    function hidePreloader() {
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.classList.add('preloader-hidden');
+        setTimeout(() => {
+          preloader.style.display = 'none';
+        }, 500); // matches CSS fade duration
+      }
+    }
+    
+    // Set a safety timeout of 3 seconds so preloader never blocks the user indefinitely
+    const safetyTimeout = setTimeout(hidePreloader, 3000);
+
+    window.addEventListener('load', function() {
+      clearTimeout(safetyTimeout);
+      hidePreloader();
+    });
+  })();
+</script>

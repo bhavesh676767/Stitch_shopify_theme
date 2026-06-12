@@ -1,0 +1,238 @@
+{% comment %} MARCOS ALPHA Product Grid Section {% endcomment %}
+
+<link rel="stylesheet" href="{{ 'product-card.css' | asset_url }}">
+
+<section class="product-grid-section section-{{ section.id }}">
+  <div class="product-grid-container">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="section-header">
+        {%- if section.settings.subtitle != blank -%}
+          <span class="section-subtitle">{{ section.settings.subtitle | escape }}</span>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="section-title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign collection = collections[section.settings.collection]
+      assign limit = section.settings.products_to_show
+    -%}
+
+    <div class="product-grid columns-{{ section.settings.columns_desktop }}">
+      {%- if collection != blank and collection.all_products_count > 0 -%}
+        {%- for product in collection.products limit: limit -%}
+          {%- render 'product-card', product: product -%}
+        {%- endfor -%}
+      {%- else -%}
+        <!-- Fallback / Onboarding mode -->
+        {%- for i in (1..limit) -%}
+          <div class="product-card">
+            <div class="product-card-media">
+              <div class="product-card-image-slide">
+                {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg product-card-img' }}
+              </div>
+            </div>
+            <div class="product-card-info">
+              <div class="info-header">
+                <span class="product-card-title">Sample Streetwear Item {{ i }}</span>
+                <span class="product-card-price">$85.00</span>
+              </div>
+              <div class="info-footer">
+                <button class="add-to-cart-btn" disabled>
+                  <span>ADD TO CART</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_view_all and collection != blank and collection.all_products_count > limit -%}
+      <div class="section-footer">
+        <a href="{{ collection.url }}" class="view-all-btn">
+          VIEW ALL RELEASES
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<!-- Include script for slider controls -->
+<script>
+  (function() {
+    function initProductCardSliders() {
+      const cards = document.querySelectorAll('.product-card');
+      
+      cards.forEach(card => {
+        const sliderWrapper = card.querySelector('.product-card-slider-wrapper');
+        const imagesContainer = card.querySelector('.product-card-images');
+        const arrowLeft = card.querySelector('.arrow-left');
+        const arrowRight = card.querySelector('.arrow-right');
+        const dots = card.querySelectorAll('.slider-dot');
+        
+        if (!imagesContainer || !sliderWrapper) return;
+        
+        let currentIndex = 0;
+        const slidesCount = imagesContainer.children.length;
+        
+        function updateSliderPosition(index) {
+          currentIndex = (index + slidesCount) % slidesCount;
+          
+          // Smoothly scroll the images container
+          const slideWidth = sliderWrapper.clientWidth;
+          imagesContainer.scrollTo({
+            left: currentIndex * slideWidth,
+            behavior: 'smooth'
+          });
+          
+          // Update active dot
+          dots.forEach(dot => {
+            if (parseInt(dot.getAttribute('data-index')) === currentIndex) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
+        
+        if (arrowLeft && arrowRight) {
+          arrowLeft.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            updateSliderPosition(currentIndex - 1);
+          });
+          
+          arrowRight.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            updateSliderPosition(currentIndex + 1);
+          });
+        }
+        
+        // Touch & Swipe Event listeners for mobile native swiping synchronization with dots
+        let isScrolling;
+        sliderWrapper.addEventListener('scroll', function() {
+          window.clearTimeout(isScrolling);
+          isScrolling = setTimeout(function() {
+            const slideWidth = sliderWrapper.clientWidth;
+            const scrollIndex = Math.round(sliderWrapper.scrollLeft / slideWidth);
+            if (scrollIndex !== currentIndex) {
+              currentIndex = scrollIndex;
+              dots.forEach(dot => {
+                if (parseInt(dot.getAttribute('data-index')) === currentIndex) {
+                  dot.classList.add('active');
+                } else {
+                  dot.classList.remove('active');
+                }
+              });
+            }
+          }, 66);
+        }, { passive: true });
+        
+        // Dot clicks
+        dots.forEach(dot => {
+          dot.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const index = parseInt(dot.getAttribute('data-index'));
+            updateSliderPosition(index);
+          });
+        });
+      });
+    }
+
+    // Initialize on load
+    window.addEventListener('load', initProductCardSliders);
+    
+    // Support Shopify Theme Editor load events
+    document.addEventListener('shopify:section:load', initProductCardSliders);
+  })();
+
+  // Global toggle wishlist helper
+  function toggleWishlist(button, productId) {
+    button.classList.toggle('wishlist-active');
+    
+    // Save state in localStorage
+    let wishlist = JSON.parse(localStorage.getItem('marcos_wishlist') || '[]');
+    if (button.classList.contains('wishlist-active')) {
+      if (!wishlist.includes(productId)) wishlist.push(productId);
+    } else {
+      wishlist = wishlist.filter(id => id !== productId);
+    }
+    localStorage.setItem('marcos_wishlist', JSON.stringify(wishlist));
+  }
+
+  // Restore wishlist state on page render
+  (function() {
+    function restoreWishlist() {
+      const wishlist = JSON.parse(localStorage.getItem('marcos_wishlist') || '[]');
+      wishlist.forEach(productId => {
+        const card = document.querySelector(`.product-card[data-product-id="${productId}"]`);
+        if (card) {
+          const btn = card.querySelector('.wishlist-btn');
+          if (btn) btn.classList.add('wishlist-active');
+        }
+      });
+    }
+    window.addEventListener('load', restoreWishlist);
+    document.addEventListener('shopify:section:load', restoreWishlist);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "SELECTED DROP"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "MARCOS ALPHA CO."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "default": 8,
+      "label": "Products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "Enable \"View all\" button if collection has more products"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

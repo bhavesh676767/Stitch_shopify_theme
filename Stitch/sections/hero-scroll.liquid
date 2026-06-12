@@ -1,0 +1,118 @@
+{% comment %} MARCOS ALPHA Premium Hero Section with Scroll Animation {% endcomment %}
+
+<link rel="stylesheet" href="{{ 'hero-scroll.css' | asset_url }}">
+
+<section id="hero-{{ section.id }}" class="hero-scroll-section" style="--header-offset: 20px;">
+  <div class="hero-scroll-wrapper">
+    <div class="hero-image-container">
+      {%- if section.settings.image != blank -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 2000 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          class="hero-img desktop-only"
+          loading="eager"
+          width="1920"
+          height="1080"
+        >
+      {%- else -%}
+        <!-- Fallback premium gradient placeholder -->
+        <div class="hero-img-placeholder desktop-only"></div>
+      {%- endif -%}
+
+      {%- if section.settings.image_mobile != blank -%}
+        <img
+          src="{{ section.settings.image_mobile | image_url: width: 800 }}"
+          alt="{{ section.settings.image_mobile.alt | escape }}"
+          class="hero-img mobile-only"
+          loading="eager"
+          width="800"
+          height="1000"
+        >
+      {%- else -%}
+        <div class="hero-img-placeholder mobile-only"></div>
+      {%- endif -%}
+
+      <div class="hero-overlay"></div>
+      
+      <div class="hero-content"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const heroSection = document.getElementById('hero-{{ section.id }}');
+    if (!heroSection) return;
+
+    let ticking = false;
+
+    function handleHeroScroll() {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // Calculate scroll progress from 0 (top) to 1 (scrolled 350px or half screen)
+      const scrollThreshold = Math.min(350, windowHeight * 0.4);
+      const progress = Math.min(scrollY / scrollThreshold, 1);
+      
+      heroSection.style.setProperty('--hero-scroll-progress', progress);
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        window.requestAnimationFrame(handleHeroScroll);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Run once on load
+    handleHeroScroll();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero Scroll",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop Hero Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile Hero Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "BUILT FOR THE BOLD"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "LIMITED DROP / MARCOS ALPHA"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "SHOP THE DROP"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Scroll",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

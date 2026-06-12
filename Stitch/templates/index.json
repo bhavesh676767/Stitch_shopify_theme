@@ -1,20 +1,39 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
+    "hero": {
+      "type": "hero-scroll",
+      "settings": {
+        "heading": "BUILT FOR THE BOLD",
+        "subheading": "LIMITED DROP / MARCOS ALPHA",
+        "button_label": "SHOP THE DROP"
+      }
+    },
+    "marquee": {
+      "type": "marquee-ticker",
+      "settings": {
+        "speed": 25,
+        "font_size": 18
+      }
+    },
+    "products": {
+      "type": "product-grid",
+      "settings": {
+        "title": "SELECTED DROP",
+        "subtitle": "MARCOS ALPHA CO.",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "show_view_all": true
+      }
+    },
+    "showcase": {
+      "type": "showcase-carousel",
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "hero",
+    "marquee",
+    "products",
+    "showcase"
   ]
 }
